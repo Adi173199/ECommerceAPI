@@ -58,11 +58,6 @@ namespace Infrastructure.Data
              _storeContext.Set<T>().Remove(entity);
         }
 
-        public async Task<bool> SaveAllAsync()
-        {
-            return await _storeContext.SaveChangesAsync() > 0;
-        }
-
         public void Update(T entity)
         {
             _storeContext.Set<T>().Attach(entity);
