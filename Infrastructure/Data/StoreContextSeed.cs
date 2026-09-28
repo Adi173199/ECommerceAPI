@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using System.Reflection;
 using System.Text.Json;
 
 namespace Infrastructure.Data
@@ -7,9 +8,11 @@ namespace Infrastructure.Data
     {
         public static async Task SeedAsync(StoreContext storeContext)
         {
+            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
             if (!storeContext.Products.Any())
             {
-                var productsData = await File.ReadAllBytesAsync("../Infrastructure/Data/SeedData/products.json");
+                var productsData = await File.ReadAllBytesAsync(path + @"/Data/SeedData/products.json");
                 var products = JsonSerializer.Deserialize<List<Product>>(productsData);
                 if (products == null)
                 {
@@ -20,8 +23,10 @@ namespace Infrastructure.Data
             }
             if (!storeContext.DeliveryMethods.Any())
             {
-                var dmData = await File.ReadAllBytesAsync("../Infrastructure/Data/SeedData/delivery.json");
-                var deliveryMethods = JsonSerializer.Deserialize<List<DeliveryMethod>>(dmData);
+                var deliveryData = await File.ReadAllBytesAsync(path + @"/Data/SeedData/delivery.json");
+                var deliveryMethods = JsonSerializer.Deserialize<List<DeliveryMethod>>(deliveryData, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+);
+
                 if (deliveryMethods == null)
                 {
                     return;

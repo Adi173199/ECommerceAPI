@@ -57,8 +57,10 @@ app.UseCors("CorsPolicy");   // must be BEFORE MapHub and MapControllers
 
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseDefaultFiles();
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseStaticFiles();
+app.MapFallbackToController("Index", "Fallback");
 
 app.MapControllers();
 app.MapGroup("api").MapIdentityApi<AppUser>();
