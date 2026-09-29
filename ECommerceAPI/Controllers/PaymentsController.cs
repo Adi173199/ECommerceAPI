@@ -87,8 +87,6 @@ namespace API.Controllers
                 {
                     await hubContext.Clients.Client(connectionId).SendAsync("OrderCompleteNotification", order.ToDto());
                 }
-
-                // TODO: SignalR
             }
         }
 
