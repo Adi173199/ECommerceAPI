@@ -9,6 +9,7 @@ namespace API.Controllers
 {
     public class ProductsController(IUnitOfWork unitOfWork) : BaseApiController
     {
+        [Cache(600)]
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<Product>>> GetProducts([FromQuery] ProductSpecParams specParams)
         {
@@ -17,6 +18,7 @@ namespace API.Controllers
             return await CreatePagedResult(unitOfWork.Repository<Product>(), spec, specParams.PageIndex, specParams.PageSize);
         }
 
+        [Cache(600)]
         [HttpGet("{id:int}")] // api/products/2
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
@@ -27,6 +29,9 @@ namespace API.Controllers
             }
             return product;
         }
+
+        [Invalidatecache("api/products|")]
+        [Cache(600)]
         [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<Product>> CreateProduct(Product product)
@@ -39,6 +44,7 @@ namespace API.Controllers
             return BadRequest("Problem Creating the Product");
         }
 
+        [Invalidatecache("api/products|")]
         [Authorize(Roles = "Admin")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult> UpdateProduct(int id, Product product)
@@ -55,6 +61,7 @@ namespace API.Controllers
                 return BadRequest("Problem Updating the Product");
         }
 
+        [Invalidatecache("api/products|")]
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> DeleteProduct(int id)
@@ -71,6 +78,8 @@ namespace API.Controllers
             }
             return BadRequest("Problem Deleting the Product");
         }
+
+        [Cache(10000)]
         [HttpGet("brands")]
         public async Task<ActionResult<IReadOnlyList<string>>> GetBrands()
         {
@@ -78,6 +87,8 @@ namespace API.Controllers
 
             return Ok(await unitOfWork.Repository<Product>().ListAsync(spec));
         }
+
+        [Cache(10000)]
         [HttpGet("types")]
         public async Task<ActionResult<IReadOnlyList<string>>> GetTypes()
         {
